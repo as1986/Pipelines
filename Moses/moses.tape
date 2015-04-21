@@ -3,16 +3,16 @@
 global {
   ducttape_experimental_submitters=enable
   ducttape_experimental_imports=enable
-  #full_node_scheduler=shell
-  full_node_scheduler=torque_normal
-  #partial_node_scheduler=shell
-  partial_node_scheduler=torque_shared
+  full_node_scheduler=shell
+  #full_node_scheduler=torque_normal
+  partial_node_scheduler=shell
+  #partial_node_scheduler=torque_shared
   tiny_task=2g
   small_task=8g
   medium_task=16g
   big_task=30g
-  #many_cpus=8
-  many_cpus=32
+  many_cpus=8
+  # many_cpus=32
 }
 
 import ../submitters.tape
@@ -181,7 +181,8 @@ task MakeMosesIni
     :: distortion_limit=@
     :: n_best_size=@
     :: moses=@ { 
-  nPtFeatures=5
+  # nPtFeatures=5
+  nPtFeatures=4
   nRoFeatures=6
   # KenLM ignores lm_order anyway
   lm_order=0

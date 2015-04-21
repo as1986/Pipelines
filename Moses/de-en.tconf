@@ -1,0 +1,48 @@
+global {
+  # Output directory:
+  ducttape_output="/usr3/home/chuchenl/moses-pipeline/de-en-outputs-3-pt-4/"
+
+  # Parameters:
+  source="/usr3/home/chuchenl/moses-pipeline/data/europarl-v7.de-en.de.tokenized.noempty.train"
+  target="/usr3/home/chuchenl/moses-pipeline/data/europarl-v7.de-en.en.tokenized.noempty.train"
+  train_corpus="/usr3/home/chuchenl/moses-pipeline/data/europarl-v7.de-en.tokenized.align.train"
+  tune_corpus="/usr3/home/chuchenl/moses-pipeline/data/europarl-v7.de-en.tokenized.align.dev"
+  test_corpus="/usr3/home/chuchenl/moses-pipeline/data/europarl-v7.de-en.tokenized.align.test"
+  use_custom_lm="false"
+  custom_lm=""
+  lm_order="3"
+  lm_data="/usr3/home/chuchenl/Pipelines/Moses/empty"
+  lm_quant_flags=""
+
+  tuneSetSource="/usr3/home/chuchenl/moses-pipeline/data/europarl-v7.de-en.de.tokenized.noempty.dev"
+  tuneSetRefs="/usr3/home/chuchenl/moses-pipeline/data/europarl-v7.de-en.en.tokenized.noempty.dev"
+
+  testSetSource="/usr3/home/chuchenl/moses-pipeline/data/europarl-v7.de-en.de.tokenized.noempty.test"
+  testSetRefs="/usr3/home/chuchenl/moses-pipeline/data/europarl-v7.de-en.en.tokenized.noempty.test"
+
+  alignment="/usr3/home/chuchenl/moses-pipeline/data/europarl-v7.de-en.tokenized.align.results.train"
+  languageModel="/oasis/projects/nsf/cmu126/ghannema/lms/c2e.3gram.trie"
+}
+
+global {
+  tuning_run_number=(TuningRun: 1 2 3)
+
+  decode_cores=8
+
+  meteor_task="li"
+  meteor_lang="other"
+ 
+  moses="/usr3/home/glample/moses/moses3/"
+  cdec_dir="/usr0/home/chuchenl/git/cdec/"
+  multeval="/usr3/home/chuchenl/multeval/multeval.sh"
+
+  ttable_limit = 20
+  reordering_model_type=msd-bidirectional-fe
+  distortion_limit=7
+  max_phrase_length=7
+  n_best_size=500
+}
+
+plan Full {
+   reach Evaluate via (TuneOrTest: test tune) * (TuningRun: 1 2 3)
+}

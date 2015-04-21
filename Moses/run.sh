@@ -15,6 +15,6 @@
 ## Export environment variables from the submitting environment:
 #PBS -V
 
-cd /home/armatthe/Research/Pipelines/Moses
-tconf="fbis.tconf"
-./moses.tape -p Full -y -C $tconf -j 40 
+pushd /usr3/home/chuchenl/Pipelines/Moses
+tconf="de-en.tconf"
+./moses.tape -p Full -y -C $tconf -j 8 
