@@ -1,11 +1,11 @@
 global {
   # Output directory:
-  ducttape_output="/usr3/home/chuchenl/moses-pipeline/de-en-outputs-3-lower/"
+  ducttape_output="/usr3/home/chuchenl/moses-pipeline/de-en-outputs-3-lower-trial"
 
   # Parameters:
-  train_corpus="/usr3/home/chuchenl/moses-pipeline/new-data/europarl-v7.de-en.tokenized.align.train.lower"
-  tune_corpus="/usr3/home/chuchenl/moses-pipeline/new-data/europarl-v7.de-en.tokenized.align.dev.lower"
-  test_corpus="/usr3/home/chuchenl/moses-pipeline/new-data/europarl-v7.de-en.tokenized.align.test.lower"
+  train_corpus="/usr3/home/chuchenl/moses-pipeline/new-data/europarl-v7.de-en.tokenized.align.train.lower.trial"
+  tune_corpus="/usr3/home/chuchenl/moses-pipeline/new-data/europarl-v7.de-en.tokenized.align.dev.lower.trial"
+  test_corpus="/usr3/home/chuchenl/moses-pipeline/new-data/europarl-v7.de-en.tokenized.align.test.lower.trial"
   use_custom_lm="false"
   custom_lm=""
   lm_order="3"

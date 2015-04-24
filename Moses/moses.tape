@@ -193,19 +193,14 @@ task MakeMosesIni
   echo "[mapping]" >> moses-init.ini
   echo "0 T 0" >> moses-init.ini
   echo "" >> moses-init.ini
-  echo "[ttable-file]" >> moses-init.ini
-  echo "0 0 0 $nPtFeatures $scored_phrase_table" >> moses-init.ini
-  echo "" >> moses-init.ini
-  echo "[lmodel-file]" >> moses-init.ini
-  # 9 means kenlm lazy loading
-  echo "9 0 $lm_order $languageModel" >> moses-init.ini
-  echo "" >> moses-init.ini
-  echo "[ttable-limit]" >> moses-init.ini
-  echo "$ttable_limit" >> moses-init.ini
-  echo "0" >> moses-init.ini
-  echo "" >> moses-init.ini
-  echo "[distortion-file]" >> moses-init.ini
-  echo "0-0 $reordering_model_type $nRoFeatures $reordering_table" >> moses-init.ini
+  echo "[feature]" >> moses-init.ini
+  echo "UnknownWordPenalty" >> moses-init.ini
+  echo "WordPenalty" >> moses-init.ini
+  echo "PhrasePenalty" >> moses-init.ini
+  echo "PhraseDictionaryMemory name=TranslationModel0 num-features=$nPtFeatures input-factor=0 output-factor=0 path=$scored_phrase_table table-limit=$ttable_limit" >> moses-init.ini
+  echo "LexicalReordering name=LexicalReordering0 num-features=$nRoFeatures path=$reordering_table type=$reordering_model_type input-factor=0 output-factor=0" >> moses-init.ini
+  echo "KENLM lazyken=1 name=LM0 factor=0 path=$languageModel order=$lm_order" >> moses-init.ini
+  echo "Distortion" >> moses-init.ini
   echo "" >> moses-init.ini
   echo "[distortion-limit]" >> moses-init.ini
   echo "$distortion_limit" >> moses-init.ini
@@ -219,27 +214,14 @@ task MakeMosesIni
   echo "" >> moses-init.ini
 
   # Add in initial weights
-  echo "[weight-d]" >> moses-init.ini
-  echo "0.4" >> moses-init.ini
-  echo "0.15" >> moses-init.ini
-  echo "0.15" >> moses-init.ini
-  echo "0.15" >> moses-init.ini
-  echo "0.15" >> moses-init.ini
-  echo "0.15" >> moses-init.ini
-  echo "0.15" >> moses-init.ini
-  echo "" >> moses-init.ini
-  echo "[weight-l]" >> moses-init.ini
-  echo "0.5" >> moses-init.ini
-  echo "" >> moses-init.ini
-  echo "[weight-t]" >> moses-init.ini
-  echo "0.2" >> moses-init.ini
-  echo "0.2" >> moses-init.ini
-  echo "0.2" >> moses-init.ini
-  echo "0.2" >> moses-init.ini
-  echo "0.2" >> moses-init.ini
-  echo "" >> moses-init.ini
-  echo "[weight-w]" >> moses-init.ini
-  echo "-1.0" >> moses-init.ini
+  echo "[weight]" >> moses-init.ini
+  echo "UnknownWordPenalty0= 1" >> moses-init.ini
+  echo "WordPenalty0= -1" >> moses-init.ini
+  echo "PhrasePenalty0= 0.2" >> moses-init.ini
+  echo "TranslationModel0= 0.2 0.2 0.2 0.2" >> moses-init.ini
+  echo "LexicalReordering0= 0.3 0.3 0.3 0.3 0.3 0.3" >> moses-init.ini
+  echo "Distortion0= 0.3" >> moses-init.ini
+  echo "LM0= 0.5" >> moses-init.ini
   echo "" >> moses-init.ini
 }
 
@@ -276,7 +258,7 @@ task Tune
     :: cores=$decode_cores
     :: tuning_run_number=@
     :: moses=@
-    :: .submitter=$full_node_scheduler .walltime="24:00:00" .cpus=$many_cpus .vmem=$big_task .q=normal { 
+    :: .submitter=$full_node_scheduler .walltime="24:00:00" .cpus=1 .vmem=$big_task .q=normal { 
 
   i=0
   for ref_file in $refs; do
@@ -300,10 +282,14 @@ task MakeFilteredMosesIni
     < tunedMosesIni=@Tune
     < filtered_pt=@FilterPhraseTable
     > mosesIni {
-  old_pt=$(grep -A 1 '^\[ttable-file\]$' $tunedMosesIni | tail -n 1 | cut -f 5 -d ' ' | sed 's/[]\/()$*.^|[]/\\&/g')
+old_pt=$(grep -oP '^PhraseDictionaryMemory .*path=\K([^ ]*) .*$' $tunedMosesIni|sed -e 's/\s.*$//'| sed 's/[]\/()$*.^|[]/\\&/g')
   new_pt=$(echo $filtered_pt/phrase-table* | sed 's/[\/&]/\\&/g')
-  old_ro=$(grep -A 1 '^\[distortion-file\]$' $tunedMosesIni | tail -n 1 | cut -f 4 -d ' ' | sed 's/[]\/()$*.^|[]/\\&/g')
+  old_ro=$(grep -oP '^LexicalReordering .*path=\K([^ ]*) .*$' $tunedMosesIni|sed -e 's/\s.*$//'| sed 's/[]\/()$*.^|[]/\\&/g')
   new_ro=$(echo $filtered_pt/reordering_table* | sed 's/[\/&]/\\&/g')
+  # old_pt=$(grep -A 1 '^\[ttable-file\]$' $tunedMosesIni | tail -n 1 | cut -f 5 -d ' ' | sed 's/[]\/()$*.^|[]/\\&/g')
+  # new_pt=$(echo $filtered_pt/phrase-table* | sed 's/[\/&]/\\&/g')
+  # old_ro=$(grep -A 1 '^\[distortion-file\]$' $tunedMosesIni | tail -n 1 | cut -f 4 -d ' ' | sed 's/[]\/()$*.^|[]/\\&/g')
+  # new_ro=$(echo $filtered_pt/reordering_table* | sed 's/[\/&]/\\&/g')
   cat $tunedMosesIni | sed "s/$old_pt/$new_pt/" | sed "s/$old_ro/$new_ro/" > $mosesIni
 }
 
