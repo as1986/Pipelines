@@ -1,6 +1,6 @@
 global {
   # Output directory:
-  ducttape_output="/usr3/home/chuchenl/moses-pipeline/de-en-outputs-3-lower/"
+  ducttape_output="/usr3/home/chuchenl/moses-pipeline/de-en-outputs-3-lower-0424/"
 
   # Parameters:
   train_corpus="/usr3/home/chuchenl/moses-pipeline/new-data/europarl-v7.de-en.tokenized.align.train.lower"
